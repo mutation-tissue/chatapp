@@ -11,44 +11,6 @@ const io = new Server(server);
 
 const router = require("./route/session.js");
 
-// データベース接続設定
-const dbConfig = {
-    host: 'localhost',
-    user: 'root',
-    password: 'ropassot',
-    database: 'test'
-  };
-  
-// データベース接続とテーブル作成を行う関数
-async function initializeDatabase() {
-try {
-    // データベースに接続
-    const connection = await mysql.createConnection(dbConfig);
-    console.log('Connected to the database.');
-
-    // テーブルを作成
-    await connection.execute(`CREATE TABLE IF NOT EXISTS users (
-                userid INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(50) UNIQUE NOT NULL,
-                password VARCHAR(255) NOT NULL
-            )`);
-    console.log('Table created or already exists.');
-
-    // 接続を閉じる
-    await connection.end();
-} catch (error) {
-    console.error('Error initializing database:', error);
-    process.exit(1);
-}
-}
-  
-// サーバー起動時にデータベースを初期化
-initializeDatabase().then(() => {
-    console.log("初期化されました")
-});
-
-// データベース接続プールの作成（アプリケーション全体で使用）
-const pool = mysql.createPool(dbConfig);
 
 app.use(session({
     secret: 'your secret key',
@@ -132,3 +94,5 @@ app.use(express.json())
 app.post('/', function (req, res) {
   console.log(req.body);
 })
+
+

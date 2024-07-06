@@ -3,6 +3,16 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
+const pool = require('../server');
+
+// sample.jsから変数をインポートする
+const db = require('../db');
+
+router.get('/test', (req, res) => {
+  // 関数を呼び出して変数の値を取得する
+  const sampleVariable = getSampleVariable();
+  res.send(`The value of sampleVariable is: ${sampleVariable}`);
+});
 
 router.post('/adduser',async (req, res)=> {
     try {
@@ -11,7 +21,7 @@ router.post('/adduser',async (req, res)=> {
         const { username, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
     
-        const [result] = await pool.execute(
+        const [result] = await db.pool.execute(
           'INSERT INTO users (username, password) VALUES (?, ?)',
           [username, hashedPassword]
         );
@@ -30,7 +40,7 @@ router.post('/login', async (req, res) => {
     try {
     const { username, password } = req.body;
 
-    const [rows] = await pool.execute(
+    const [rows] = await db.pool.execute(
         'SELECT * FROM users WHERE username = ?',
         [username]
     );
@@ -76,6 +86,7 @@ router.get("/create-account", (req, res) => {
   });
 
 router.get("/login", (req, res) => {
+    console.log(db.pool);
     res.render("./login.ejs")
 });
 
