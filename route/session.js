@@ -8,12 +8,6 @@ const pool = require('../server');
 // sample.jsから変数をインポートする
 const db = require('../db');
 
-router.get('/test', (req, res) => {
-  // 関数を呼び出して変数の値を取得する
-  const sampleVariable = getSampleVariable();
-  res.send(`The value of sampleVariable is: ${sampleVariable}`);
-});
-
 router.post('/adduser',async (req, res)=> {
     try {
 
@@ -32,7 +26,7 @@ router.post('/adduser',async (req, res)=> {
         res.status(500).json({ message: 'Error registering user' });
       }
 
-      res.render("./chat.ejs")
+      res.render("./mainmenu.ejs")
     });
 
 // ログイン
@@ -68,7 +62,11 @@ router.post('/login', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error logging in' });
     }
-    res.render("./chat.ejs")
+    res.redirect('./mainmenu');
+});
+
+router.get('/mainmenu', (req,res) => {
+  res.render("./mainmenu.ejs",{ user: req.session.user });
 });
 
 // ログアウト
