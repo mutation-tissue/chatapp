@@ -8,6 +8,10 @@ const pool = require('../server');
 // sample.jsから変数をインポートする
 const db = require('../db');
 
+router.get('/', (req,res) => {
+  res.render("./index.ejs",{ user: req.session.user });
+});
+
 router.post('/adduser',async (req, res)=> {
     try {
 
@@ -30,6 +34,12 @@ router.post('/adduser',async (req, res)=> {
     });
 
 // ログイン
+
+router.get("/login", (req, res) => {
+  console.log(db.pool);
+  res.render("./login.ejs")
+});
+
 router.post('/login', async (req, res) => {
     try {
     const { username, password } = req.body;
@@ -62,11 +72,7 @@ router.post('/login', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error logging in' });
     }
-    res.redirect('./mainmenu');
-});
-
-router.get('/mainmenu', (req,res) => {
-  res.render("./mainmenu.ejs",{ user: req.session.user });
+    res.redirect('./');
 });
 
 // ログアウト
@@ -82,10 +88,5 @@ router.get('/logout', (req, res) => {
 router.get("/create-account", (req, res) => {
     res.render("./create_account.ejs")
   });
-
-router.get("/login", (req, res) => {
-    console.log(db.pool);
-    res.render("./login.ejs")
-});
-
+  
 module.exports = router;  // 外部から読み込むために
