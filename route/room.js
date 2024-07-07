@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 const pool = require('../server');
-const { fetchDataFromDB } = require('../middleware/session_user');
+const { get_messages } = require('../middleware/session_user');
 // sample.jsから変数をインポートする
 const db = require('../db');
 
@@ -55,6 +55,15 @@ room.post('/create',async (req, res)=> {
       }
 
       res.render("./index.ejs", {user: req.session.user.userid})
-    });
+});
 
+room.get('/:id', get_messages, (req,res) => {
+    console.log('you access ' ,req.params.id);
+    console.log(req.session.user);
+    const messages = req.messages;
+    console.log(messages);
+    res.render('chat.ejs', {messages: messages});
+    
+    
+});
 module.exports = room;  // 外部から読み込むために

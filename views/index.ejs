@@ -13,7 +13,9 @@
         <ul id="userList">
           <% rooms.forEach(function(room) { %>
             <li class="user-item" data-id="<%= user.id %>">
-              roomname: <%= room.room_name %>, created_at: <%= room.created_at %>
+              <a href="/room/<%= room.room_id%>">
+                roomname: <%= room.room_name %>, created_at: <%= room.created_at %>
+              </a>
             </li>
           <% }); %>
         </ul>

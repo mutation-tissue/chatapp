@@ -17,7 +17,7 @@ const fetchDataFromDB = async (req, res, next) => {
 
 
             const [room_names] = await db.pool.query(
-                'SELECT room_name,created_at FROM chat_rooms WHERE room_id IN (?)',
+                'SELECT * FROM chat_rooms WHERE room_id IN (?)',
                 [roomIdsArray]
             );
             console.log(room_names);
@@ -32,4 +32,26 @@ const fetchDataFromDB = async (req, res, next) => {
     next();
 };
 
-module.exports = { fetchDataFromDB };
+
+const get_messages = async (req, res, next) => {
+    console.log(req.session.user);
+    if(req.session.user){
+        try {
+            console.log("get db data",req.params.id);
+            // データベースからデータを取得する処理
+            const [message_texts] = await db.pool.query(
+                'SELECT message_text FROM messages WHERE room_id = ?',
+                [req.params.id]
+            );
+            req.messages = message_texts; // 取得したデータをリクエストオブジェクトに格納
+            
+            next(); // 次のミドルウェアまたはルートハンドラに制御を移す
+        } catch (error) {
+            console.error('Error fetching data from database:', error);
+            res.status(500).send('An error occurred while fetching data');
+        }
+    } else {
+        next();
+    }
+};
+module.exports = { fetchDataFromDB ,get_messages};
