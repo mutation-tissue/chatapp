@@ -54,12 +54,33 @@ room.post('/create',async (req, res)=> {
       res.render("./index.ejs", {user: req.session.user.userid})
 });
 
+room.post('/add_message/:id',async (req, res)=> {
+    try {
+
+        //この書き方は分割代入法という短縮形
+        const { message } = req.body;
+
+        await db.pool.execute(
+            'INSERT INTO messages (room_id,user_id,message_text) VALUES (?,?,?)',
+            [
+                req.params.id,
+                req.session.user.user_id,
+                message
+            ]
+        );
+    
+        //res.status(201).json({ message: 'User registered successfully' });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error registering user' });
+      }
+});
 room.get('/:id', get_messages, (req,res) => {
     console.log('you access ' ,req.params.id);
     console.log(req.session.user);
     const messages = req.messages;
     console.log(messages, req.params.id);
-    res.render('chat.ejs', {messages: messages, room_id: req.params.id});
+    res.render('chat.ejs', {messages: messages, room_id: req.params.id, user: req.session.user});
     
     
 });
