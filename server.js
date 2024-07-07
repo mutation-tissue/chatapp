@@ -10,7 +10,13 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 const router = require("./route/session.js");
+const room = require("./route/room.js");
+app.use(express.json())
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
+app.use(express.static('public'));
 
 app.use(session({
     secret: 'your secret key',
@@ -18,6 +24,11 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false } // HTTPS使用時はtrueに設定
   }));
+
+// body-parser
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use("/session", router);
+app.use("/room", room);
 
 // ユーザープロフィール（認証が必要なルート）
 app.get('/profile', (req, res) => {
@@ -39,15 +50,6 @@ next();
 app.get('/protected', requireAuth, (req, res) => {
 res.json({ message: 'This is a protected route', user: req.session.user });
 });
-
-// body-parser
-app.use(bodyParser.urlencoded({ extended: true }))
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
-app.use(express.static('public'));
 
 app.get("/", (req, res) => {
   res.render("./index.ejs",{ user: req.session.user });
@@ -75,8 +77,6 @@ app.get('/user/:id', (req, res) => {
     console.log(userId);
   });
 
-app.use("/session", router);
-
 io.on("connection", (socket) => {
   console.log("ユーザーが接続しました");
   socket.on("chat message", (msg) => {
@@ -88,8 +88,6 @@ io.on("connection", (socket) => {
 server.listen(process.env.PORT || 3000, () => {
   console.log("listenin on 3000");
 });
-
-app.use(express.json())
 
 app.post('/', function (req, res) {
   console.log(req.body);
