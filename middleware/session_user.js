@@ -40,7 +40,7 @@ const get_messages = async (req, res, next) => {
             console.log("get db data",req.params.id);
             // データベースからデータを取得する処理
             const [message_texts] = await db.pool.query(
-                'SELECT message_text FROM messages WHERE room_id = ?',
+                'SELECT room_id,message_text FROM messages WHERE room_id = ?',
                 [req.params.id]
             );
             req.messages = message_texts; // 取得したデータをリクエストオブジェクトに格納

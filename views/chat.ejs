@@ -55,6 +55,7 @@
     </style>
   </head>
   <body>
+    <p>ID: <%= room_id %></p>
     <ul id="messages">
       <% messages.forEach(function(message){%>
         <li>
@@ -79,7 +80,7 @@
     // サーバーへ接続
     const socket = io();
 
-    socket.emit('join room', "test");
+    socket.emit('join room', '<%=JSON.stringify(room_id) %>');
 
     const clearText = () => {
       document.getElementById('inputText').value = '';
@@ -102,9 +103,8 @@
       if (inputMessage === '') {
         return;
       }
-
       // 'sendMessage' イベントを発火、メッセージを送信
-      socket.emit('room message', "test",inputMessage);
+      socket.emit('room message', '<%= JSON.stringify(room_id) %>',inputMessage);
 
       // input 内のテキストを空にする
       clearText();

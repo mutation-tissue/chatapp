@@ -58,8 +58,8 @@ room.get('/:id', get_messages, (req,res) => {
     console.log('you access ' ,req.params.id);
     console.log(req.session.user);
     const messages = req.messages;
-    console.log(messages);
-    res.render('chat.ejs', {messages: messages});
+    console.log(messages, req.params.id);
+    res.render('chat.ejs', {messages: messages, room_id: req.params.id});
     
     
 });
