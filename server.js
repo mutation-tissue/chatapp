@@ -54,8 +54,8 @@ res.json({ message: 'This is a protected route', user: req.session.user });
 
 app.get('/', fetchDataFromDB,(req, res) => {
   console.log('user middle ware');
-  const data = req.dataFromDB;
-  res.render("./index.ejs",{ user: req.session.user });
+  const room_names = req.dataFromDB;
+  res.render("./index.ejs",{ user: req.session.user ,rooms: room_names});
 });
 
 app.get('/users', async (req, res) => {

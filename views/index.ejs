@@ -9,6 +9,14 @@
     <% if (user) { %>
         <p>Welcome, <%= user.username %>!</p>
         <a href = "/room/create">部屋を作成する</a>
+
+        <ul id="userList">
+          <% rooms.forEach(function(room) { %>
+            <li class="user-item" data-id="<%= user.id %>">
+              roomname: <%= room.room_name %>, created_at: <%= room.created_at %>
+            </li>
+          <% }); %>
+        </ul>
       <% } else { %>
         <h1>チャットアプリにようこそ</h1>
         <a href = "/session/login">ログインする</a>
