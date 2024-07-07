@@ -8,6 +8,7 @@
 <body>
     <% if (user) { %>
         <p>Welcome, <%= user.username %>!</p>
+        <a href = "/room/create">部屋を作成する</a>
       <% } else { %>
         <h1>チャットアプリにようこそ</h1>
         <a href = "/session/login">ログインする</a>

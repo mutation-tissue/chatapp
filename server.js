@@ -8,6 +8,7 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+const { fetchDataFromDB } = require('./middleware/session_user');
 
 const router = require("./route/session.js");
 const room = require("./route/room.js");
@@ -51,7 +52,9 @@ app.get('/protected', requireAuth, (req, res) => {
 res.json({ message: 'This is a protected route', user: req.session.user });
 });
 
-app.get("/", (req, res) => {
+app.get('/', fetchDataFromDB,(req, res) => {
+  console.log('user middle ware');
+  const data = req.dataFromDB;
   res.render("./index.ejs",{ user: req.session.user });
 });
 

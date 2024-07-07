@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 const pool = require('../server');
-
+const { fetchDataFromDB } = require('../middleware/session_user');
 // sample.jsから変数をインポートする
 const db = require('../db');
 
@@ -62,17 +62,16 @@ router.post('/login', async (req, res) => {
 
     // セッションにユーザー情報を保存
     req.session.user = {
-        userid: user.userid,
+        user_id: user.user_id,
         username: user.username
       };
-
     //req.session.userId = user.id;
     //res.json({ message: 'Logged in successfully' });
     } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error logging in' });
     }
-    res.redirect('./');
+    res.redirect('../');
 });
 
 // ログアウト
