@@ -21,7 +21,6 @@ room.post('/create',async (req, res)=> {
 
         //この書き方は分割代入法という短縮形
         const { roomname, member } = req.body;
-        console.log(req.body);
 
         await db.pool.execute(
           'INSERT INTO chat_rooms (room_name) VALUES (?)',
@@ -31,9 +30,7 @@ room.post('/create',async (req, res)=> {
             'SELECT * FROM chat_rooms WHERE room_name = ?',
             [roomname]
           );
-        console.log(req.session.user);
-        console.log(result[0].room_id)
-
+          
         await db.pool.execute(
             'INSERT INTO user_room_memberships (user_id,room_id) VALUES (?,?)',
             [req.session.user.user_id, result[0].room_id]

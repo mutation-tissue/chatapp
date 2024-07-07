@@ -6,12 +6,14 @@ const path = require('path');
 const session = require('express-session');
 const http = require("http");
 const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
 const { fetchDataFromDB } = require('./middleware/session_user');
-
 const router = require("./route/session.js");
 const room = require("./route/room.js");
+
+// サーバーインスタンスをSocket.ioの設定に渡す
+const socketio = require('./socketio');
+socketio.conenct_socketio(server);
+
 app.use(express.json())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -79,14 +81,6 @@ app.get('/user/:id', (req, res) => {
     //res.render('userDetail', { userId: userId });
     console.log(userId);
   });
-
-io.on("connection", (socket) => {
-  console.log("ユーザーが接続しました");
-  socket.on("chat message", (msg) => {
-    // console.log("massage:" + msg);
-    io.emit("chat message", msg);
-  });
-});
 
 server.listen(process.env.PORT || 3000, () => {
   console.log("listenin on 3000");

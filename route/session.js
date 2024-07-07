@@ -71,6 +71,7 @@ router.post('/login', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error logging in' });
     }
+
     res.redirect('../');
 });
 

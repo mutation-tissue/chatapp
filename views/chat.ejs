@@ -66,28 +66,55 @@
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      let socket = io();
+    <!-- クライアント側のHTMLファイル -->
+    <h1>Chat Room</h1>
+    <h1>simple chat</h1>
+    <input id="inputText" type="text">
+    <input id="sendButton" type="submit">
+  <ul id="messageList">
+  </ul>
+  <!-- ライブラリの読み込み -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // サーバーへ接続
+    const socket = io();
 
-      const form = document.getElementById("form");
-      const input = document.getElementById("input");
-      const messages = document.getElementById("messages");
+    socket.emit('join room', "test");
 
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        if (input.value) {
-          socket.emit("chat message", input.value);
-          input.value = "";
-        }
-      });
+    const clearText = () => {
+      document.getElementById('inputText').value = '';
+    }
 
-      socket.on("chat message", function (msg) {
-        let item = document.createElement("li");
-        item.textContent = msg;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-      });
-    </script>
+    const addMessageList = (message) => {
+      const ul = document.getElementById('messageList');
+      const li = document.createElement('li');
+      const text = document.createTextNode(message);
+      li.appendChild(text);
+      ul.appendChild(li);
+    };
+    
+    // 送信ボタンのクリックイベントを検知
+    document.getElementById('sendButton').addEventListener('click', () => {
+
+      // inputに入力されたテキストを取得
+      let inputMessage = document.getElementById('inputText').value;
+
+      if (inputMessage === '') {
+        return;
+      }
+
+      // 'sendMessage' イベントを発火、メッセージを送信
+      socket.emit('room message', "test",inputMessage);
+
+      // input 内のテキストを空にする
+      clearText();
+    });
+
+
+    socket.on('receiveMessage', (message) => {
+      // 受信したメッセージをulタグに挿入
+      addMessageList(message);
+    });
+  </script>
   </body>
 </html>
