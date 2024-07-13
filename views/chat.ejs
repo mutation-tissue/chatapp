@@ -14,26 +14,25 @@
   </head>
   <body>
     <p>ID: <%= room_id %> USER: <%= user.username %></p>
+    <h1>Chat Room</h1>
+    <h1>simple chat</h1>
     <div class ="scroll-container" id="scroll-container">
       <ul id="messages">
         <% messages.forEach(function(message){ %>
           <% if(message.user_id == user.user_id) { %>
             <li class = 'message self'>
-              <%= message.message_text %>
+              <%= message.username + ':' + message.message_text %>
             </li>
           <% } else { %>
             <li class = 'message other'>
-              <%= message.message_text %>
+              <%= message.username + ':' + message.message_text %>
             </li>
           <% } %>
         <%});%>
       </ul>
   </div>
-    <!-- クライアント側のHTMLファイル -->
-    <h1>Chat Room</h1>
-    <h1>simple chat</h1>
       <input id = "inputText" name='message' type='text'>
-      <input id='sendButton' type='submit'>
+      <input id='sendButton'type='submit'>
 
 
   <!-- ライブラリの読み込み -->
@@ -55,10 +54,10 @@
       document.getElementById('inputText').value = '';
     }
 
-    const addMessageList = (user_id,message) => {
+    const addMessageList = (user_id,username,message) => {
       const ul = document.getElementById('messages');
       const li = document.createElement('li');
-      const text = message;
+      const text = username + ":" +message;
       li.appendChild(document.createTextNode(text));
 
       li.classList.add('message');
@@ -67,9 +66,9 @@
           } else {
             li.classList.add('other');
           }
-
       ul.appendChild(li);
     };
+
     
     // 送信ボタンのクリックイベントを検知
     document.getElementById('sendButton').addEventListener('click', () => {
@@ -88,9 +87,9 @@
     });
 
 
-    socket.on('receiveMessage', (user_id,message) => {
+    socket.on('receiveMessage', (user_id,username,message) => {
       // 受信したメッセージをulタグに挿入
-      addMessageList(user_id,message);
+      addMessageList(user_id,username,message);
     });
   </script>
   </body>

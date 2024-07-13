@@ -32,13 +32,20 @@ function conenct_socketio(server) {
                     message
                 ]
             );
-        
+
+            const [send_user] = await db.pool.query(
+                'SELECT username FROM users where user_id = ?',
+                [
+                    user_id
+                ]
+            );
+            console.log(send_user[0]);
                 //res.status(201).json({ message: 'User registered successfully' });
+                io.to(room_id).emit('receiveMessage', user_id,send_user[0].username,message);
             } catch (error) {
                 console.error(error);
             }
       
-            io.to(room_id).emit('receiveMessage', user_id,message);
         });
 
         // クライアントが切断したときのイベント

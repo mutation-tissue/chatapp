@@ -39,8 +39,12 @@ const get_messages = async (req, res, next) => {
         try {
             console.log("get db data",req.params.id);
             // データベースからデータを取得する処理
+            const query = `
+                SELECT users.username,messages.message_text, messages.user_id FROM users
+                inner JOIN messages ON messages.user_id = users.user_id where room_id = ?;
+            `;
             const [message_texts] = await db.pool.query(
-                'SELECT user_id,room_id,message_text FROM messages WHERE room_id = ?',
+                query,
                 [req.params.id]
             );
             req.messages = message_texts; // 取得したデータをリクエストオブジェクトに格納
