@@ -4,6 +4,7 @@ const bodyParser =require("body-parser");
 const app = express();
 const path = require('path');
 const session = require('express-session');
+const flash = require('connect-flash');
 const http = require("http");
 const server = http.createServer(app);
 const { fetchDataFromDB } = require('./middleware/session_user');
@@ -18,6 +19,8 @@ app.use(express.json())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.use(flash());
 
 app.use(express.static('public'));
 

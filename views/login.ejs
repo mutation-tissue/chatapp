@@ -28,6 +28,9 @@
 
 <body>
     <div>
+        <% if (error_message) { %>
+            <p style="color: red;"><%= error_message %></p>
+        <% } %>
             <center>
                 <h1 class="contact-title">ログイン</h1>
                 <p>ID, Passwordご入力の上, 「認証」ボタンをクリックしてください.</p>
@@ -35,8 +38,8 @@
             <div>
 
             <form action="/session/login" method="post">
-                <input type="text" name="username" placeholder="username">
-                <input type="password" name="password" placeholder="password">
+                <input type="text" name="username" placeholder="username" required>
+                <input type="password" name="password" placeholder="password" required>
                 <input type="submit" value="送信！">
             </form>
 
