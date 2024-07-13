@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ja">
+<header>
+    <div class="logo">ロゴ</div>
+    <nav>
+        <% if(user) {%>
+          <a href = "/session/logout">ログアウト</a>
+        <% } else { %>
+          <a href = "/session/login">ログイン</a>
+          <a href = "/session/create-account">アカウントを作成</a>
+        <% }; %>
+    </nav>
+</header>

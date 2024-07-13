@@ -3,17 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>ログイン</title>
-    <link rel="stylesheet" href="style.css">
+    <title>部屋を作成する</title>
 </head>
 
-<header>
-    <center>
-        <h1>JavaScriptとHTMLで簡単なログインフォームを作る</h1>
-    </center>
-</header>
 <style>
-    header {
+    .title {
         position: fixed;
         color: white;
         width: 100%;
@@ -22,11 +16,13 @@
     }
 </style>
 
-<br>
-<br>
-<br>
-
 <body>
+    <%- include('./header'); %>
+    <div class = "title">
+        <center>
+            <h1>新しいチャットルームを作る</h1>
+        </center>
+    </div>
     <div>
             <center>
                 <h1 class="contact-title">新しい部屋を作る</h1>

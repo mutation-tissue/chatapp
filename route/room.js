@@ -14,7 +14,7 @@ room.get('/',is_user_login, fetchDataFromDB, (req,res) => {
 });
 
 room.get('/create',is_user_login, (req,res) => {
-    res.render('./create_room.ejs');
+    res.render('./create_room.ejs',{user:req.session.user});
 });
 
 room.post('/create',async (req, res)=> {
