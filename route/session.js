@@ -71,6 +71,7 @@ router.post('/login', async (req, res) => {
         console.log("アカウントが見つかりません")
         return res.redirect('./login');
     }
+    
 
     const user = rows[0];
     const isValidPassword = await bcrypt.compare(password, user.password);
