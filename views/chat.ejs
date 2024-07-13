@@ -3,94 +3,71 @@
   <head>
     <title>chatapp tutorial</title>
     <style>
-      body {
-        margin: 0;
-        padding-bottom: 3rem;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
+      .scroll-container {
+          width: 300px;
+          height: 200px;
+          border: 2px solid #333;
+          overflow: auto;
+          padding: 10px;
       }
-
-      #form {
-        background: #181818dc;
-        padding: 0.25rem;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        height: 3rem;
-        box-sizing: border-box;
-        backdrop-filter: blur(10px);
-      }
-      #input {
-        border: none;
-        padding: 0 1rem;
-        flex-grow: 1;
-        margin: 0.25rem;
-      }
-      #input:focus {
-        outline: none;
-      }
-      #form > button {
-        background: #4e8357;
-        border: none;
-        padding: 0 1rem;
-        margin: 0.25rem;
-        border-radius: 1px;
-        outline: none;
-        color: #fff;
-      }
-
-      #messages {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-      #messages > li {
-        padding: 0.5rem 1rem;
-      }
-      #messages > li:nth-child(odd) {
-        background: #efefef;
-      }
-    </style>
+  </style>
   </head>
   <body>
-    <p>ID: <%= room_id %></p>
-    <ul id="messages">
-      <% messages.forEach(function(message){%>
-        <li>
-          message : <%= message.message_text %>
-        </li>
-      <%});%>
-    </ul>
-    
-    <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+    <p>ID: <%= room_id %> USER: <%= user.username %></p>
+    <div class ="scroll-container" id="scroll-container">
+      <ul id="messages">
+        <% messages.forEach(function(message){ %>
+          <% if(message.user_id == user.user_id) { %>
+            <li class = 'message self'>
+              <%= message.message_text %>
+            </li>
+          <% } else { %>
+            <li class = 'message other'>
+              <%= message.message_text %>
+            </li>
+          <% } %>
+        <%});%>
+      </ul>
+  </div>
     <!-- クライアント側のHTMLファイル -->
     <h1>Chat Room</h1>
     <h1>simple chat</h1>
-    <input id="inputText" type="text">
-    <input id="sendButton" type="submit">
-  <ul id="messageList">
-  </ul>
+      <input id = "inputText" name='message' type='text'>
+      <input id='sendButton' type='submit'>
+
+
   <!-- ライブラリの読み込み -->
+   
   <script src="/socket.io/socket.io.js"></script>
+  <script>
+      window.addEventListener('load', function() {
+          var container = document.getElementById('scroll-container');
+          container.scrollTop = container.scrollHeight;
+      });
+  </script>
   <script>
     // サーバーへ接続
     const socket = io();
 
-    socket.emit('join room', '<%=JSON.stringify(room_id) %>');
+    socket.emit('join room', '<%=room_id %>');
 
     const clearText = () => {
       document.getElementById('inputText').value = '';
     }
 
-    const addMessageList = (message) => {
-      const ul = document.getElementById('messageList');
+    const addMessageList = (user_id,message) => {
+      const ul = document.getElementById('messages');
       const li = document.createElement('li');
-      const text = document.createTextNode(message);
-      li.appendChild(text);
+      const text = message;
+      li.appendChild(document.createTextNode(text));
+
+      li.classList.add('message');
+          if (user_id === '<%=user.user_id %>') {
+            li.classList.add('self');
+          } else {
+            li.classList.add('other');
+          }
+
       ul.appendChild(li);
     };
     
@@ -104,16 +81,16 @@
         return;
       }
       // 'sendMessage' イベントを発火、メッセージを送信
-      socket.emit('room message', '<%= JSON.stringify(room_id) %>',inputMessage);
+      socket.emit('room message', '<%=user.user_id%>','<%=room_id %>',inputMessage);
 
       // input 内のテキストを空にする
       clearText();
     });
 
 
-    socket.on('receiveMessage', (message) => {
+    socket.on('receiveMessage', (user_id,message) => {
       // 受信したメッセージをulタグに挿入
-      addMessageList(message);
+      addMessageList(user_id,message);
     });
   </script>
   </body>

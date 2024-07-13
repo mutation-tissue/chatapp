@@ -1,4 +1,5 @@
 const socketIo = require('socket.io');
+const db = require('./db');
 
 function conenct_socketio(server) {
     const io = socketIo(server);
@@ -17,10 +18,27 @@ function conenct_socketio(server) {
         });
 
         // ルーム内の全員にメッセージを送信するイベントを受け取る
-        socket.on('room message', (room, message) => {
+        socket.on('room message', async(user_id,room_id, message) => {
             console.log("room sekected");
-            console.log(room, message);
-            io.to(room).emit('receiveMessage', message);
+            console.log(user_id,room_id, message);
+
+            try {
+
+            await db.pool.execute(
+                'INSERT INTO messages (room_id,user_id,message_text) VALUES (?,?,?)',
+                [
+                    room_id,
+                    user_id,
+                    message
+                ]
+            );
+        
+                //res.status(201).json({ message: 'User registered successfully' });
+            } catch (error) {
+                console.error(error);
+            }
+      
+            io.to(room_id).emit('receiveMessage', user_id,message);
         });
 
         // クライアントが切断したときのイベント

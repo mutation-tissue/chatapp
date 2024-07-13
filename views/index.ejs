@@ -6,6 +6,17 @@
     <title>Document</title>
 </head>
 <body>
+    <header>
+        <div class="logo">ロゴ</div>
+        <nav>
+            <% if(user) {%>
+              <a href = "/session/logout">ログアウト</a>
+            <% } else { %>
+              <a href = "/session/login">ログイン</a>
+              <a href = "/session/create-account">アカウントを作成</a>
+            <% }; %>
+        </nav>
+    </header>
     <% if (user) { %>
         <p>Welcome, <%= user.username %>!</p>
         <a href = "/room/create">部屋を作成する</a>
@@ -21,58 +32,9 @@
         </ul>
       <% } else { %>
         <h1>チャットアプリにようこそ</h1>
-        <a href = "/session/login">ログインする</a>
-        <a href = "/session/create-account">アカウントを作成する</a>
+        
       <% } %>
-
-      <!-- クライアント側のHTMLファイル -->
-      <h1>Chat Room</h1>
-      <h1>simple chat</h1>
-      <input id="inputText" type="text">
-      <input id="sendButton" type="submit">
-    <ul id="messageList">
     </ul>
-    <!-- ライブラリの読み込み -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      // サーバーへ接続
-      const socket = io();
-
-      const clearText = () => {
-        document.getElementById('inputText').value = '';
-      }
-
-      const addMessageList = (message) => {
-        const ul = document.getElementById('messageList');
-        const li = document.createElement('li');
-        const text = document.createTextNode(message);
-        li.appendChild(text);
-        ul.appendChild(li);
-      };
-      
-      // 送信ボタンのクリックイベントを検知
-      document.getElementById('sendButton').addEventListener('click', () => {
-
-        // inputに入力されたテキストを取得
-        let inputMessage = document.getElementById('inputText').value;
-
-        if (inputMessage === '') {
-          return;
-        }
-
-        // 'sendMessage' イベントを発火、メッセージを送信
-        socket.emit('sendMessage', inputMessage);
-
-        // input 内のテキストを空にする
-        clearText();
-      });
-
-
-      socket.on('receiveMessage', (message) => {
-        // 受信したメッセージをulタグに挿入
-        addMessageList(message);
-      });
-    </script>
 
 </body>
 </html>
