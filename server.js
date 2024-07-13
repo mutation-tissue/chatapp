@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 
 app.use(flash());
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
     secret: 'your secret key',
@@ -58,7 +58,6 @@ res.json({ message: 'This is a protected route', user: req.session.user });
 });
 
 app.get('/', fetchDataFromDB,(req, res) => {
-  console.log('user middle ware');
   const room_names = req.dataFromDB;
   res.render("./index.ejs",{ user: req.session.user ,rooms: room_names});
 });
@@ -93,4 +92,13 @@ app.post('/', function (req, res) {
   console.log(req.body);
 })
 
+// 404ハンドラー
+app.all("*", (req, res) => {
+  res.send("404!")
+})
 
+// エラーハンドラ
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})

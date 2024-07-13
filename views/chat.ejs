@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
     <title>chatapp tutorial</title>
-    <style>
-      .scroll-container {
-          width: 300px;
-          height: 200px;
-          border: 2px solid #333;
-          overflow: auto;
-          padding: 10px;
-      }
-  </style>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/css/chat_style.css" /> 
   </head>
   <body>
     <p>ID: <%= room_id %> USER: <%= user.username %></p>
@@ -46,51 +41,51 @@
   </script>
   <script>
     // サーバーへ接続
-    const socket = io();
+const socket = io();
 
-    socket.emit('join room', '<%=room_id %>');
+socket.emit('join room', '<%=room_id %>');
 
-    const clearText = () => {
-      document.getElementById('inputText').value = '';
-    }
+const clearText = () => {
+  document.getElementById('inputText').value = '';
+}
 
-    const addMessageList = (user_id,username,message) => {
-      const ul = document.getElementById('messages');
-      const li = document.createElement('li');
-      const text = username + ":" +message;
-      li.appendChild(document.createTextNode(text));
+const addMessageList = (user_id,username,message) => {
+  const ul = document.getElementById('messages');
+  const li = document.createElement('li');
+  const text = username + ":" +message;
+  li.appendChild(document.createTextNode(text));
 
-      li.classList.add('message');
-          if (user_id === '<%=user.user_id %>') {
-            li.classList.add('self');
-          } else {
-            li.classList.add('other');
-          }
-      ul.appendChild(li);
-    };
-
-    
-    // 送信ボタンのクリックイベントを検知
-    document.getElementById('sendButton').addEventListener('click', () => {
-
-      // inputに入力されたテキストを取得
-      let inputMessage = document.getElementById('inputText').value;
-
-      if (inputMessage === '') {
-        return;
+  li.classList.add('message');
+      if (user_id === '<%=user.user_id %>') {
+        li.classList.add('self');
+      } else {
+        li.classList.add('other');
       }
-      // 'sendMessage' イベントを発火、メッセージを送信
-      socket.emit('room message', '<%=user.user_id%>','<%=room_id %>',inputMessage);
-
-      // input 内のテキストを空にする
-      clearText();
-    });
+  ul.appendChild(li);
+};
 
 
-    socket.on('receiveMessage', (user_id,username,message) => {
-      // 受信したメッセージをulタグに挿入
-      addMessageList(user_id,username,message);
-    });
+// 送信ボタンのクリックイベントを検知
+document.getElementById('sendButton').addEventListener('click', () => {
+
+  // inputに入力されたテキストを取得
+  let inputMessage = document.getElementById('inputText').value;
+
+  if (inputMessage === '') {
+    return;
+  }
+  // 'sendMessage' イベントを発火、メッセージを送信
+  socket.emit('room message', '<%=user.user_id%>','<%=room_id %>',inputMessage);
+
+  // input 内のテキストを空にする
+  clearText();
+});
+
+
+socket.on('receiveMessage', (user_id,username,message) => {
+  // 受信したメッセージをulタグに挿入
+  addMessageList(user_id,username,message);
+});
   </script>
   </body>
 </html>

@@ -19,12 +19,23 @@
             <% }; %>
         </nav>
     </header>
+    <% if (error_message) { %>
+      <p style="color: red;"><%= error_message %></p>
+    <% } %>
     <% if (user) { %>
         <p>Welcome, <%= user.username %>!</p>
-    <% } else { %>
-      <h1>チャットアプリにようこそ</h1>
-      
-    <% } %>
+        <a href = "/room/create">部屋を作成する</a>
+
+        <ul id="userList">
+          <% rooms.forEach(function(room) { %>
+            <li class="user-item" data-id="<%= user.id %>">
+              <a href="/room/<%= room.room_id%>">
+                roomname: <%= room.room_name %>, created_at: <%= room.created_at %>
+              </a>
+            </li>
+          <% }); %>
+        </ul>
+      <% }%>
     </ul>
 
 </body>

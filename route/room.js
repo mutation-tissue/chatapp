@@ -4,15 +4,16 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 const pool = require('../server');
-const { get_messages } = require('../middleware/session_user');
+const { get_messages,is_user_login,is_there_room, fetchDataFromDB } = require('../middleware/session_user');
 // sample.jsから変数をインポートする
 const db = require('../db');
 
-room.get('/', (req,res) => {
-  console.log('test');
+room.get('/',is_user_login, fetchDataFromDB, (req,res) => {
+  const room_names = req.dataFromDB;
+  res.render('./rooms.ejs',{ user: req.session.user ,rooms: room_names ,error_message:  req.flash('error')});
 });
 
-room.get('/create', (req,res) => {
+room.get('/create',is_user_login, (req,res) => {
     res.render('./create_room.ejs');
 });
 
@@ -75,7 +76,7 @@ room.post('/add_message/:id',async (req, res)=> {
         res.status(500).json({ message: 'Error registering user' });
       }
 });
-room.get('/:id', get_messages, (req,res) => {
+room.get('/:id', is_user_login, is_there_room ,get_messages, (req,res) => {
     console.log('you access ' ,req.params.id);
     console.log(req.session.user);
     const messages = req.messages;

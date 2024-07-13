@@ -1,9 +1,17 @@
 const db = require('../db');
 
+const is_user_login =  (req, res, next) => {
+    if (req.session && req.session.user) {
+        next();  // セッションが存在する場合は次のミドルウェアまたはルートハンドラに進む
+    } else {
+        res.redirect('/session/login');  // セッションが存在しない場合はログインページにリダイレクト
+    }
+}
+
 const fetchDataFromDB = async (req, res, next) => {
     console.log(req.session.user);
-    if(req.session.user){
-        try {
+    try {
+        if(req.session.user){
             console.log("get db data");
             // データベースからデータを取得する処理
             const [user_join_room_id] = await db.pool.query(
@@ -22,16 +30,34 @@ const fetchDataFromDB = async (req, res, next) => {
             );
             console.log(room_names);
             req.dataFromDB = room_names; // 取得したデータをリクエストオブジェクトに格納
-            
+        }
             next(); // 次のミドルウェアまたはルートハンドラに制御を移す
         } catch (error) {
             console.error('Error fetching data from database:', error);
             res.status(500).send('An error occurred while fetching data');
         }
-    }
-    next();
 };
-
+const is_there_room = async (req, res, next) => {
+    try {
+    
+        // データベースからデータを取得する処理
+        const [room_id] = await db.pool.query(
+            'SELECT room_id FROM chat_rooms WHERE room_id = ?',
+            [req.params.id]
+        );
+        console.log(room_id);
+        if (room_id.length === 0) {
+            //return res.status(401).json({ message: 'Invalid username or password' });
+            req.flash('error', '部屋が見つかりませんでした。');
+            console.log("部屋が見つかりません")
+            return res.redirect('./');
+        }
+    } catch (error) {
+        console.error('Error fetching data from database:', error);
+        res.status(500).send('An error occurred while fetching data');
+    }
+    next(); // 次のミドルウェアまたはルートハンドラに制御を移す
+};
 
 const get_messages = async (req, res, next) => {
     console.log(req.session.user);
@@ -58,4 +84,4 @@ const get_messages = async (req, res, next) => {
         next();
     }
 };
-module.exports = { fetchDataFromDB ,get_messages};
+module.exports = { fetchDataFromDB ,get_messages,is_user_login,is_there_room};

@@ -24,11 +24,6 @@ app.use(
   })
 );
 
-
-router.get('/', (req,res) => {
-  res.render("./index.ejs");
-});
-
 router.post('/adduser',async (req, res)=> {
     try {
 
@@ -71,7 +66,7 @@ router.post('/login', async (req, res) => {
         console.log("アカウントが見つかりません")
         return res.redirect('./login');
     }
-    
+
 
     const user = rows[0];
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -95,7 +90,8 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Error logging in' });
     }
 
-    res.redirect('../');
+    //res.json({ message: 'Logged in successfully' });
+    res.redirect('../room');
 });
 
 // ログアウト
@@ -105,7 +101,7 @@ router.get('/logout', (req, res) => {
         return res.status(500).json({ message: 'Error logging out' });
     }
     //res.json({ message: 'Logged out successfully' });
-    return res.redirect('./');
+    return res.redirect('../');
     });
 });
 
